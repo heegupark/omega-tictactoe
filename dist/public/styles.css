@@ -1,5 +1,18 @@
+html {
+  height: 100%;
+}
+
 body {
+  height: 100%;
   font-size: 14px;
+  background-color: black;
+  color: white;
+}
+
+main {
+  height: 100vh;
+  width: 100%;
+  padding: 0;
 }
 
 .omega-logo {
@@ -10,51 +23,237 @@ body {
   height: 35px;
 }
 
+.menu-box {
+  width: 100%;
+  top: 7%;
+}
+
+.menu {
+  width: 50%;
+}
+
+.board {
+  width: 600px;
+  height: 600px;
+}
+
+.grid-row {
+  width: 100%;
+  height: 33.3%;
+}
+
+.grid {
+  height: 100%;
+  width: 33%;
+  font-size: 120px;
+  text-align: center;
+}
+
+.h-40px {
+  height: 40px;
+}
+
+.play-custom {
+  top: 10%;
+  left: 48%;
+}
+
+.line {
+  background-color: #888;
+}
+
+.thin {
+  font-weight: 100;
+}
+
+.gold {
+  color: gold;
+}
+
+.gold-hover:hover {
+  color: gold
+}
+
 .cursor {
   cursor: pointer;
 }
 
-.card-btn-custom {
-  top: 0;
-  background-color: rgb(0,0,0,0.5);
-}
-
-.memo {
+.input-custom {
   width: 150px;
-  min-height: 180px;
+  height: 35px;
+  background-color: rgba(0,0,0,0);
+  color: white;
+  border: none;
 }
 
-.memo-board {
+.btn-custom-no-hover {
+  width: 100px;
+  height: 35px;
+  margin: 0 20px;
+  background-color: rgba(0,0,0,0);
+  color: white;
+  border: none;
+}
+
+.btn-custom {
+  width: 100px;
+  height: 35px;
+  margin: 0 20px;
+  background-color: rgba(0,0,0,0);
+  color: white;
+  border: 1px solid #888;
+}
+
+.btn-custom:hover {
+  color: gold;
+  border: 1px solid gold;
+}
+
+.btn-custom-no-border {
+  width: 100px;
+  height: 35px;
+  background-color: rgba(0,0,0,0);
+  color: white;
+  border: none;
+}
+
+.btn-custom-no-border:hover {
+  color: gold;
+}
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
-  /* min-width: 100vh; */
-  min-height: 200vh;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
 }
 
-.h-30 {
-  height: 30px;
-}
-
-.resize-none {
-  resize: none;
+.modal-content {
+  background-color: rgba(0,0,0,0.9);
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
 }
 
 @media (max-width: 1199.98px) {
 }
 
 @media (max-width: 991.98px) {
+
 }
 
 @media (max-width: 767.98px) {
-    .memo {
-    width: 100px;
-    font-size: 12px;
-    min-height: 120px;
+  .board {
+    width: 510px;
+    height: 510px;
+  }
+
+  .grid {
+    font-size: 80px;
+  }
+
+  .modal-content {
+    width: 50%;
   }
 }
 
-@media (max-width: 575.98px) {
 
+@media (max-width: 575.98px) {
+  .board {
+    width: 270px;
+    height: 270px;
+  }
+
+  .grid {
+    font-size: 55px;
+  }
+
+  .play-custom {
+    left: 45%;
+  }
+
+  .modal-content {
+    margin: 25% auto;
+    width: 80%;
+  }
+
+  .menu {
+    width: 90%;
+  }
+}
+
+@media (max-width: 375px) {
+  .play-custom {
+    left: 44%;
+  }
+}
+
+@media (max-width: 320px) {
+  .play-custom {
+    left: 43.5%;
+  }
+}
+
+@media (max-height: 414px) {
+  .board {
+    width: 270px;
+    height: 270px;
+  }
+
+  .grid {
+    font-size: 55px;
+  }
+
+  .play-custom {
+    top: 47%;
+    left: 0.5%;
+    width: 33.5%;
+  }
+
+  .menu-box {
+    width: 30%;
+  }
+
+  .menu-item {
+    margin: 35px 0px;
+  }
+}
+
+@media (max-height: 320px) {
+  .board {
+    width: 240px;
+    height: 240px;
+  }
+
+  .grid {
+    font-size: 50px;
+  }
+
+  .play-custom {
+    top: 46%;
+    left: 0;
+    width: 28%;
+  }
+
+  .menu-box {
+    width: 23%;
+  }
+
+  .menu-item {
+    margin: 25px 0px;
+  }
+
+  .modal-content {
+    margin: 15% auto;
+    width: 70%;
+  }
 }
 
 @media (max-width: 260px) {
