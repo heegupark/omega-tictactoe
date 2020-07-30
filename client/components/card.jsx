@@ -12,7 +12,7 @@ class Card extends Component {
 
   render() {
     const { handleClick } = this;
-    const { id, card, isPlayerTurn, myChecker } = this.props;
+    const { id, card, user, turn, player1 } = this.props;
     const isBorder = (id % 3 === 0 || id % 3 === 1);
     const isClicked = card ? card.isClicked : false;
     return (
@@ -21,19 +21,19 @@ class Card extends Component {
               ${isBorder ? 'border-right' : ''} grid
               ${isClicked
                 ? ''
-                : isPlayerTurn
+                : user === turn
                   ? 'cursor'
                   : ''}`}
         onClick={
           isClicked
             ? null
-            : isPlayerTurn
+            : user === turn
               ? handleClick
               : null
         }>
         <span className={`${card.winCol ? 'gold' : ''}`}>
           {isClicked
-            ? myChecker
+            ? card.player === player1 ? 'O' : 'X'
             : ''
           }
         </span>

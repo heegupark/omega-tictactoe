@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
-class Player extends Component {
+class User extends Component {
   constructor() {
     super();
     this.state = {
-      player: ''
+      user: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleCreateUsername = this.handleCreateUsername.bind(this);
@@ -15,20 +15,20 @@ class Player extends Component {
       event.target.value = event.target.value.trim();
     }
     this.setState({
-      player: event.target.value
+      user: event.target.value
     });
   }
 
   handleCreateUsername() {
-    const { player } = this.state;
+    const { user } = this.state;
     const random = Math.floor(Math.random() * 1000);
-    this.props.setPlayer(player || `player#${random}`);
+    this.props.setUser(user || `player#${random}`);
     this.props.setView('waiting');
   }
 
   render() {
     const { handleChange, handleCreateUsername } = this;
-    const { player } = this.state;
+    const { user } = this.state;
     return (
       <div className="modal">
         <div className="modal-content">
@@ -46,7 +46,7 @@ class Player extends Component {
                     type="text"
                     className="input-custom rounded px-2 text-center"
                     placeholder={'type username'}
-                    value={player}
+                    value={user}
                     onChange={handleChange} />
                 </td>
               </tr>
@@ -68,4 +68,4 @@ class Player extends Component {
   }
 }
 
-export default Player;
+export default User;

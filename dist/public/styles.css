@@ -121,6 +121,11 @@ main {
   color: gold;
 }
 
+.count-down-num{
+  font-size: 150px;
+  margin-top: 20%;
+}
+
 .modal {
   display: block;
   position: fixed;
@@ -139,7 +144,7 @@ main {
   margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 30%;
+  width: 40%;
 }
 
 @media (max-width: 1199.98px) {

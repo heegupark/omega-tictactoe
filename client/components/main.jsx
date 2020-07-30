@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import Board from './board';
-import Player from './player';
+import User from './user';
 import Waiting from './waiting';
 import Room from './room';
 import Menu from './menu';
 import Play from './play';
-import Modal from './modal';
+import AutoStartModal from './auto-start-modal';
+import socketIOClient from 'socket.io-client';
+const socket = socketIOClient('/');
 
 class Main extends Component {
   constructor() {
@@ -13,20 +15,24 @@ class Main extends Component {
     this.state = {
       isStarted: false,
       isPlaying: false,
+      isPaused: false,
       time: 10,
       room: {},
-      view: 'player',
+      view: 'user',
       mode: 'single',
-      player: '',
+      turn: '',
+      user: '',
       player1: '',
-      player2: 'computer'
+      player2: ''
     };
     this.timer = null;
     this.setTime = this.setTime.bind(this);
     this.play = this.play.bind(this);
     this.stop = this.stop.bind(this);
+    this.pause = this.pause.bind(this);
     this.setView = this.setView.bind(this);
-    this.setPlayer = this.setPlayer.bind(this);
+    this.setUser = this.setUser.bind(this);
+    this.setPlayers = this.setPlayers.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.handleStart = this.handleStart.bind(this);
     this.changePlayer = this.changePlayer.bind(this);
@@ -35,17 +41,14 @@ class Main extends Component {
     this.countDown = this.countDown.bind(this);
     this.handleResume = this.handleResume.bind(this);
     this.playGame = this.playGame.bind(this);
+    this.resume = this.resume.bind(this);
   }
 
-  componentDidUpdate() {
-    this.startTimer();
-    const { time } = this.state;
-    if (time <= 0) {
-      setTimeout(() => {
-        this.setTime();
-        this.changePlayer();
-      }, 1000);
-    }
+  componentDidMount() {
+    const { room } = this.state;
+    socket.on(`resume-${room.roomId}`, data => {
+      this.resume();
+    });
   }
 
   componentWillUnmount() {
@@ -60,23 +63,40 @@ class Main extends Component {
   }
 
   handleResume() {
+    const { room } = this.state;
+    socket.emit('resume', { roomId: room.roomId });
+  }
+
+  resume() {
     this.setState({
-      isPlaying: true
+      isPlaying: true,
+      isPaused: false
     });
   }
 
   play() {
     this.setTime();
     this.setState({
+      turn: this.state.player1,
+      isPaused: false,
       isPlaying: true
     });
   }
 
   stop() {
     this.setState({
-      isPlaying: false
+      isPlaying: false,
+      isPaused: true,
+      turn: ''
     });
     // this.stopTimer();
+  }
+
+  pause() {
+    this.setState({
+      isPlaying: false,
+      isPaused: true
+    });
   }
 
   setTime() {
@@ -93,8 +113,22 @@ class Main extends Component {
     });
   }
 
-  setPlayer(player) {
-    this.setState({ player, player1: player });
+  setUser(user) {
+    this.setState({ user });
+  }
+
+  setPlayers(players) {
+    if (players[0]) {
+      this.setState({
+        player1: players[0].user,
+        player2: 'computer'
+      });
+    }
+    if (players[1]) {
+      this.setState({
+        player2: players[1].user
+      });
+    }
   }
 
   countDown() {
@@ -107,7 +141,9 @@ class Main extends Component {
     const { isPlaying } = this.state;
     this.stopTimer();
     if (isPlaying) {
-      this.timer = setInterval(this.countDown, 1000);
+      this.timer = setInterval(() => {
+        this.countDown();
+      }, 1000);
     } else {
       this.stopTimer();
     }
@@ -125,21 +161,22 @@ class Main extends Component {
   }
 
   changePlayer() {
+    const { turn, player1, player2 } = this.state;
     this.setState({
-      turn: this.state.turnm === this.state.player1 ? this.state.player2 : this.state.player1
+      turn: turn === player1 ? player2 : player1
     });
   }
 
   playGame(mode) {
-    if (mode === 'single') {
-      this.setState({ mode });
-      this.setView('game');
-    }
+    // if (mode === 'multi') {
+    this.setState({ mode, turn: this.state.user });
+    this.setView('game', this.state.room);
+    // }
   }
 
   render() {
-    const { handleStart, play, changePlayer, setTime, setView, playGame, setPlayer, resetGame, handleResume, stop } = this;
-    const { time, isStarted, player, player1, player2, turn, isPlaying, view, room, mode } = this.state;
+    const { handleStart, play, changePlayer, setTime, setView, playGame, setUser, startTimer, setPlayers, resetGame, handleResume, stop, pause } = this;
+    const { time, isPaused, isStarted, user, player1, player2, turn, isPlaying, view, room, mode } = this.state;
     let element = null;
     switch (view) {
       case 'game':
@@ -147,6 +184,7 @@ class Main extends Component {
           <>
             <Menu
               time={time}
+              user={user}
               player1={player1}
               player2={player2}
               turn={turn}
@@ -154,39 +192,44 @@ class Main extends Component {
             />
             <Board
               time={time}
-              player={player}
+              turn={turn}
+              user={user}
+              room={room}
               player1={player1}
               player2={player2}
               resetGame={resetGame}
               stop={stop}
               mode={mode}
               setTime={setTime}
-              isStarted={isStarted}
-              isPlaying={isPlaying}
+              startTimer={startTimer}
+              isPaused={isPaused}
               handleResume={handleResume}
               changePlayer={changePlayer}
               play={play}
             />
             <Play
               play={play}
-              stop={stop}
+              room={room}
+              pause={pause}
               isPlaying={isPlaying}
             />
             {isStarted
               ? ''
-              : <Modal
-                category="start"
+              : <AutoStartModal
                 handleStart={handleStart}
               />
+              //   category="start"
+              //   handleStart={handleStart}
+              // />
             }
           </>
         );
         break;
-      case 'player':
+      case 'user':
         element = (
-          <Player
-            player={player}
-            setPlayer={setPlayer}
+          <User
+            user={user}
+            setUser={setUser}
             setView={setView}
           />
         );
@@ -203,7 +246,8 @@ class Main extends Component {
           <Room
             room={room}
             playGame={playGame}
-            player={player}
+            user={user}
+            setPlayers={setPlayers}
             setView={setView}
           />
         );

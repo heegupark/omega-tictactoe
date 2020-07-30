@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import Card from './card';
 import Modal from './modal';
+import socketIOClient from 'socket.io-client';
+const socket = socketIOClient('/');
 
 class Board extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       cards: [],
       numOfCards: 9,
       isGameOver: false,
-      winner: '',
-      isPlayerTurn: true,
-      checker: 'O'
+      winner: ''
     };
     this.setCards = this.setCards.bind(this);
     this.setWin = this.setWin.bind(this);
@@ -21,37 +21,57 @@ class Board extends Component {
     this.changePlayer = this.changePlayer.bind(this);
     this.handleReplayClick = this.handleReplayClick.bind(this);
     this.playComputer = this.playComputer.bind(this);
-    this.changeChecker = this.changeChecker.bind(this);
+    this.replay = this.replay.bind(this);
   }
 
   componentDidMount() {
     this.setCards();
+    const { room } = this.props;
+    socket.on(`click-card-${room.roomId}`, data => {
+      this.setState({
+        cards: data.cards
+      });
+    });
+    socket.on(`change-player-${room.roomId}`, data => {
+      this.changePlayer();
+    });
+    socket.on(`win-${room.roomId}`, data => {
+      this.setWin(data.result);
+    });
+    socket.on(`draw-${room.roomId}`, data => {
+      this.setDraw();
+    });
+    socket.on(`replay-${room.roomId}`, data => {
+      this.replay();
+    });
   }
 
   componentDidUpdate() {
-    if (!this.state.isPlayerTurn) { this.playComputer(); }
+    const { time } = this.props;
+    this.props.startTimer();
+    if (time === 0) {
+      setTimeout(() => {
+        this.props.setTime();
+        this.changePlayer();
+      }, 1000);
+    }
   }
 
   playComputer() {
-    // console.log(this.state.cards);
     const { cards } = this.state;
     const random = Math.random(0, 1) * 10;
+    const arr = [...((add, set) => add(set, add))((set, add) => set.size < 9 ? add(set.add(Math.floor(Math.random() * 9)), add) : set, new Set())];
     setTimeout(() => {
-      for (let i = 0; i < cards.length; i++) {
+      for (const i of arr) {
         if (!cards[i].isClicked) {
           cards[i].player = 'computer';
           cards[i].isClicked = true;
           break;
         }
       }
-    }, random);
-    this.changePlayer();
-  }
-
-  changeChecker() {
-    this.setState({
-      checker: this.state.checker === 'O' ? 'X' : 'O'
-    });
+      this.checkWin();
+      // this.changePlayer();
+    }, random * 1000);
   }
 
   setCards() {
@@ -71,20 +91,25 @@ class Board extends Component {
   }
 
   changePlayer() {
-    this.setState({
-      isPlayerTurn: !this.state.isPlayerTurn
-    });
+    const currentPlayer = this.props.turn;
     this.props.changePlayer();
     this.props.setTime();
+    if (this.props.mode === 'single') {
+      const nextPlayer = currentPlayer === this.props.user ? 'computer' : this.props.user;
+      if (nextPlayer === 'computer') {
+        this.playComputer();
+      }
+    }
   }
 
   clickCard(id) {
     const { cards } = this.state;
-    const { player } = this.props;
-    cards[id] = { id, player, isClicked: true };
-    this.setState({
-      cards
-    });
+    const { turn, room } = this.props;
+    cards[id] = { id, player: turn, isClicked: true };
+    // this.setState({
+    //   cards
+    // });
+    socket.emit('click-card', { roomId: room.roomId, cards });
     this.checkWin();
   }
 
@@ -96,7 +121,7 @@ class Board extends Component {
     });
     this.setState({
       isGameOver: true,
-      winner: this.props.player
+      winner: this.props.turn
     });
     this.props.stop();
   }
@@ -111,13 +136,15 @@ class Board extends Component {
 
   checkWin() {
     const { cards } = this.state;
+    const { room } = this.props;
 
     if (cards[0].player &&
         cards[4].player &&
         cards[8].player &&
         cards[0].player === cards[4].player &&
         cards[4].player === cards[8].player) {
-      this.setWin([0, 4, 8]);
+      socket.emit('win', { roomId: room.roomId, result: [0, 4, 8] });
+      // this.setWin([0, 4, 8]);
       return;
     }
 
@@ -126,7 +153,8 @@ class Board extends Component {
         cards[6].player &&
         cards[2].player === cards[4].player &&
         cards[4].player === cards[6].player) {
-      this.setWin([2, 4, 6]);
+      socket.emit('win', { roomId: room.roomId, result: [2, 4, 6] });
+      // this.setWin([2, 4, 6]);
       return;
     }
 
@@ -136,7 +164,8 @@ class Board extends Component {
           cards[i + 6].player &&
           cards[i].player === cards[i + 3].player &&
           cards[i + 3].player === cards[i + 6].player) {
-        this.setWin([i, i + 3, i + 6]);
+        socket.emit('win', { roomId: room.roomId, result: [i, i + 3, i + 6] });
+        // this.setWin([i, i + 3, i + 6]);
         return;
       }
     }
@@ -147,7 +176,8 @@ class Board extends Component {
         cards[i + 2].player &&
         cards[i].player === cards[i + 1].player &&
         cards[i + 1].player === cards[i + 2].player) {
-        this.setWin([i, i + 1, i + 2]);
+        socket.emit('win', { roomId: room.roomId, result: [i, i + 1, i + 2] });
+        // this.setWin([i, i + 1, i + 2]);
         return;
       }
     }
@@ -160,13 +190,20 @@ class Board extends Component {
       cards[6].player &&
       cards[7].player &&
       cards[8].player) {
-      this.setDraw();
+      socket.emit('draw', { roomId: room.roomId });
+      // this.setDraw();
       return;
     }
-    this.changePlayer();
+    // this.changePlayer();
+    socket.emit('change-player', { roomId: room.roomId });
   }
 
   handleReplayClick() {
+    const { room } = this.props;
+    socket.emit('replay', { roomId: room.roomId });
+  }
+
+  replay() {
     this.setState({
       isGameOver: false,
       winner: ''
@@ -177,8 +214,8 @@ class Board extends Component {
 
   render() {
     const { clickCard, handleReplayClick } = this;
-    const { time, isStarted, isPlaying, handleResume } = this.props;
-    const { cards, isGameOver, winner, isPlayerTurn, checker } = this.state;
+    const { user, turn, player1, player2, time, isPaused, handleResume } = this.props;
+    const { cards, isGameOver, winner } = this.state;
     return (
       <div className="board mx-auto">
         <div className="row grid-row mx-auto border-bottom">
@@ -189,8 +226,10 @@ class Board extends Component {
                   key={card.id}
                   id={card.id}
                   card={card}
-                  isPlayerTurn={isPlayerTurn}
-                  checker={checker}
+                  user={user}
+                  turn={turn}
+                  player1={player1}
+                  player2={player2}
                   clickCard={clickCard}
                 />
               );
@@ -206,8 +245,10 @@ class Board extends Component {
                   key={card.id}
                   id={card.id}
                   card={card}
-                  isPlayerTurn={isPlayerTurn}
-                  checker={checker}
+                  user={user}
+                  turn={turn}
+                  player1={player1}
+                  player2={player2}
                   clickCard={clickCard}
                 />
               );
@@ -223,8 +264,10 @@ class Board extends Component {
                   key={card.id}
                   id={card.id}
                   card={card}
-                  isPlayerTurn={isPlayerTurn}
-                  checker={checker}
+                  user={user}
+                  turn={turn}
+                  player1={player1}
+                  player2={player2}
                   clickCard={clickCard}
                 />
               );
@@ -238,12 +281,12 @@ class Board extends Component {
             handleReplayClick={handleReplayClick}
             winner={winner}
           />
-          : isPlaying && isStarted
-            ? ''
-            : <Modal
+          : isPaused
+            ? <Modal
               category="paused"
               handleResume={handleResume}
             />
+            : ''
         }
         {time
           ? ''

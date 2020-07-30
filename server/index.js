@@ -26,32 +26,41 @@ io.on('connection', socket => {
     const index = rooms.findIndex(room => room.roomId === data.roomId);
     const numberOfPlayers = rooms[index].players.length;
     if (numberOfPlayers >= 2) {
-      rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ player: data.player, ready: false }) : '');
-      socket.emit('room', { success: false, message: 'unable to join' });
+      rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
+      socket.emit(`room-${data.roomId}`, { success: false, message: 'unable to join' });
     } else {
-      rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ player: data.player, ready: false }) : '');
-      socket.emit('room', { success: true, rooms });
-      socket.broadcast.emit('room', { success: true, rooms });
+      rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
+      socket.emit(`room-${data.roomId}`, { success: true, rooms });
+      socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
     }
   });
 
   socket.on('game-ready', (data, callback) => {
     rooms.map(room => {
-      const index = room.players.findIndex(player => player.player.toString() === data.player.toString());
-      room.players[index].ready = true;
+      if (room.roomId === data.roomId) {
+        const index = room.players.findIndex(player => player.user.toString() === data.user.toString());
+        room.players[index].ready = true;
+      }
       return room;
     });
-    socket.emit('room', { success: true, rooms });
-    socket.broadcast.emit('room', { success: true, rooms });
+    socket.emit(`room-${data.roomId}`, { success: true, rooms });
+    socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
   });
 
   socket.on('leave-room', (data, callback) => {
     rooms.map(room => {
-      const index = room.players.findIndex(player => player.player.toString() === data.player.toString());
-      return room.roomId.toString() === data.roomId.toString() ? room.players.splice(index, 1) : '';
+      const index = room.players.findIndex(player => player.user.toString() === data.user.toString());
+      if (room.roomId.toString() === data.roomId.toString()) {
+        room.players.splice(index, 1);
+      }
+      return room;
     });
-    socket.emit('room', { success: true, rooms });
-    socket.broadcast.emit('room', { success: true, rooms });
+    socket.emit(`room-${data.roomId}`, { success: true, rooms });
+    socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
+
+    const newRooms = rooms.filter(room => room.players.length !== 0);
+    rooms = [...newRooms];
+    socket.emit('room-list', { success: true, rooms });
   });
 
   socket.on('refresh-room', (data, callback) => {
@@ -59,6 +68,41 @@ io.on('connection', socket => {
   });
 
   socket.emit('room-list', { success: true, rooms });
+
+  socket.on('play-game', (data, callback) => {
+    socket.emit(`play-game-${data.roomId}`, { success: true });
+    socket.broadcast.emit(`play-game-${data.roomId}`, { success: true });
+  });
+
+  socket.on('click-card', (data, callback) => {
+    socket.emit(`click-card-${data.roomId}`, { success: true, cards: data.cards });
+    socket.broadcast.emit(`click-card-${data.roomId}`, { success: true, cards: data.cards });
+  });
+
+  socket.on('change-player', (data, callback) => {
+    socket.emit(`change-player-${data.roomId}`, { success: true });
+    socket.broadcast.emit(`change-player-${data.roomId}`, { success: true });
+  });
+
+  socket.on('win', (data, callback) => {
+    socket.emit(`win-${data.roomId}`, { success: true, result: data.result });
+    socket.broadcast.emit(`win-${data.roomId}`, { success: true, result: data.result });
+  });
+
+  socket.on('draw', (data, callback) => {
+    socket.emit(`draw-${data.roomId}`, { success: true });
+    socket.broadcast.emit(`draw-${data.roomId}`, { success: true });
+  });
+
+  socket.on('replay', (data, callback) => {
+    socket.emit(`replay-${data.roomId}`, { success: true });
+    socket.broadcast.emit(`replay-${data.roomId}`, { success: true });
+  });
+
+  socket.on('pause', (data, callback) => {
+    socket.emit(`pause-${data.roomId}`, { success: true });
+    socket.broadcast.emit(`pause-${data.roomId}`, { success: true });
+  });
 
   socket.on('disconnect', () => {
     const newRooms = rooms.filter(room => room.id.toString() !== socket.id.toString());

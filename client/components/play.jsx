@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import socketIOClient from 'socket.io-client';
+const socket = socketIOClient('/');
 
 class Menu extends Component {
   constructor() {
@@ -6,8 +8,17 @@ class Menu extends Component {
     this.handlePauseClick = this.handlePauseClick.bind(this);
   }
 
+  componentDidMount() {
+    const { room } = this.props;
+    socket.on(`pause-${room.roomId}`, data => {
+      this.props.pause();
+    });
+  }
+
   handlePauseClick() {
-    this.props.stop();
+    const { room } = this.props;
+    socket.emit('pause', { roomId: room.roomId });
+    // this.props.pause();
   }
 
   render() {

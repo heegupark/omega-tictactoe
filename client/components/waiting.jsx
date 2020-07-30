@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { v1 as uuidv1 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import socketIOClient from 'socket.io-client';
 const socket = socketIOClient('/');
 
@@ -66,7 +66,7 @@ class Waiting extends Component {
     const { name } = this.state;
     const random = Math.floor(Math.random() * 1000);
     const room = {
-      id: uuidv1(),
+      id: uuidv4(),
       name: name ? name.trim() : `room-${random}`
     };
     socket.emit('create-room', room);
