@@ -20,29 +20,34 @@ class Board extends Component {
     this.clickCard = this.clickCard.bind(this);
     this.changePlayer = this.changePlayer.bind(this);
     this.handleReplayClick = this.handleReplayClick.bind(this);
+    this.handleBackToWaitingClick = this.handleBackToWaitingClick.bind(this);
     this.playComputer = this.playComputer.bind(this);
     this.replay = this.replay.bind(this);
+    this.back = this.back.bind(this);
   }
 
   componentDidMount() {
     this.setCards();
     const { room } = this.props;
-    socket.on(`click-card-${room.roomId}`, data => {
+    socket.on(`click-card-${room.id}`, data => {
       this.setState({
         cards: data.cards
       });
     });
-    socket.on(`change-player-${room.roomId}`, data => {
+    socket.on(`change-player-${room.id}`, data => {
       this.changePlayer();
     });
-    socket.on(`win-${room.roomId}`, data => {
+    socket.on(`win-${room.id}`, data => {
       this.setWin(data.result);
     });
-    socket.on(`draw-${room.roomId}`, data => {
+    socket.on(`draw-${room.id}`, data => {
       this.setDraw();
     });
-    socket.on(`replay-${room.roomId}`, data => {
+    socket.on(`replay-${room.id}`, data => {
       this.replay();
+    });
+    socket.on(`back-to-waiting-${room.id}`, data => {
+      this.back();
     });
   }
 
@@ -106,10 +111,7 @@ class Board extends Component {
     const { cards } = this.state;
     const { turn, room } = this.props;
     cards[id] = { id, player: turn, isClicked: true };
-    // this.setState({
-    //   cards
-    // });
-    socket.emit('click-card', { roomId: room.roomId, cards });
+    socket.emit('click-card', { roomId: room.id, cards });
     this.checkWin();
   }
 
@@ -143,7 +145,7 @@ class Board extends Component {
         cards[8].player &&
         cards[0].player === cards[4].player &&
         cards[4].player === cards[8].player) {
-      socket.emit('win', { roomId: room.roomId, result: [0, 4, 8] });
+      socket.emit('win', { roomId: room.id, result: [0, 4, 8] });
       // this.setWin([0, 4, 8]);
       return;
     }
@@ -153,7 +155,7 @@ class Board extends Component {
         cards[6].player &&
         cards[2].player === cards[4].player &&
         cards[4].player === cards[6].player) {
-      socket.emit('win', { roomId: room.roomId, result: [2, 4, 6] });
+      socket.emit('win', { roomId: room.id, result: [2, 4, 6] });
       // this.setWin([2, 4, 6]);
       return;
     }
@@ -164,7 +166,7 @@ class Board extends Component {
           cards[i + 6].player &&
           cards[i].player === cards[i + 3].player &&
           cards[i + 3].player === cards[i + 6].player) {
-        socket.emit('win', { roomId: room.roomId, result: [i, i + 3, i + 6] });
+        socket.emit('win', { roomId: room.id, result: [i, i + 3, i + 6] });
         // this.setWin([i, i + 3, i + 6]);
         return;
       }
@@ -176,7 +178,7 @@ class Board extends Component {
         cards[i + 2].player &&
         cards[i].player === cards[i + 1].player &&
         cards[i + 1].player === cards[i + 2].player) {
-        socket.emit('win', { roomId: room.roomId, result: [i, i + 1, i + 2] });
+        socket.emit('win', { roomId: room.id, result: [i, i + 1, i + 2] });
         // this.setWin([i, i + 1, i + 2]);
         return;
       }
@@ -190,17 +192,22 @@ class Board extends Component {
       cards[6].player &&
       cards[7].player &&
       cards[8].player) {
-      socket.emit('draw', { roomId: room.roomId });
+      socket.emit('draw', { roomId: room.id });
       // this.setDraw();
       return;
     }
     // this.changePlayer();
-    socket.emit('change-player', { roomId: room.roomId });
+    socket.emit('change-player', { roomId: room.id });
   }
 
   handleReplayClick() {
     const { room } = this.props;
-    socket.emit('replay', { roomId: room.roomId });
+    socket.emit('replay', { roomId: room.id });
+  }
+
+  handleBackToWaitingClick() {
+    const { room } = this.props;
+    socket.emit('back-to-waiting', { roomId: room.id });
   }
 
   replay() {
@@ -212,9 +219,14 @@ class Board extends Component {
     this.setCards();
   }
 
+  back() {
+    const { room } = this.props;
+    this.props.setView('room', room);
+  }
+
   render() {
-    const { clickCard, handleReplayClick } = this;
-    const { user, turn, player1, player2, time, isPaused, handleResume } = this.props;
+    const { clickCard, handleReplayClick, handleBackToWaitingClick } = this;
+    const { user, turn, player1, player2, time } = this.props;
     const { cards, isGameOver, winner } = this.state;
     return (
       <div className="board mx-auto">
@@ -279,14 +291,10 @@ class Board extends Component {
           ? <Modal
             category="win"
             handleReplayClick={handleReplayClick}
+            handleBackToWaitingClick={handleBackToWaitingClick}
             winner={winner}
           />
-          : isPaused
-            ? <Modal
-              category="paused"
-              handleResume={handleResume}
-            />
-            : ''
+          : ''
         }
         {time
           ? ''

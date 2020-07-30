@@ -23,6 +23,10 @@ main {
   height: 35px;
 }
 
+.ready-custom {
+  width: 150px;
+}
+
 .menu-box {
   width: 100%;
   top: 7%;

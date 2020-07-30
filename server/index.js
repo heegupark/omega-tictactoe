@@ -24,14 +24,16 @@ io.on('connection', socket => {
 
   socket.on('join-room', (data, callback) => {
     const index = rooms.findIndex(room => room.roomId === data.roomId);
-    const numberOfPlayers = rooms[index].players.length;
-    if (numberOfPlayers >= 2) {
-      rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
-      socket.emit(`room-${data.roomId}`, { success: false, message: 'unable to join' });
-    } else {
-      rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
-      socket.emit(`room-${data.roomId}`, { success: true, rooms });
-      socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
+    if (index >= 0) {
+      const numberOfPlayers = rooms[index].players.length;
+      if (numberOfPlayers >= 2) {
+        rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
+        socket.emit(`room-${data.roomId}`, { success: false, message: 'unable to join' });
+      } else {
+        rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
+        socket.emit(`room-${data.roomId}`, { success: true, rooms });
+        socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
+      }
     }
   });
 
@@ -99,9 +101,17 @@ io.on('connection', socket => {
     socket.broadcast.emit(`replay-${data.roomId}`, { success: true });
   });
 
-  socket.on('pause', (data, callback) => {
-    socket.emit(`pause-${data.roomId}`, { success: true });
-    socket.broadcast.emit(`pause-${data.roomId}`, { success: true });
+  socket.on('back-to-waiting', (data, callback) => {
+    rooms.map(room => {
+      if (room.roomId.toString() === data.roomId.toString()) {
+        while (room.players.length) {
+          room.players.pop();
+        }
+      }
+      return room;
+    });
+    socket.emit(`back-to-waiting-${data.roomId}`, { success: true });
+    socket.broadcast.emit(`back-to-waiting-${data.roomId}`, { success: true });
   });
 
   socket.on('disconnect', () => {

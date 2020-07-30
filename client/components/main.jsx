@@ -4,10 +4,7 @@ import User from './user';
 import Waiting from './waiting';
 import Room from './room';
 import Menu from './menu';
-import Play from './play';
 import AutoStartModal from './auto-start-modal';
-import socketIOClient from 'socket.io-client';
-const socket = socketIOClient('/');
 
 class Main extends Component {
   constructor() {
@@ -15,7 +12,6 @@ class Main extends Component {
     this.state = {
       isStarted: false,
       isPlaying: false,
-      isPaused: false,
       time: 10,
       room: {},
       view: 'user',
@@ -29,7 +25,6 @@ class Main extends Component {
     this.setTime = this.setTime.bind(this);
     this.play = this.play.bind(this);
     this.stop = this.stop.bind(this);
-    this.pause = this.pause.bind(this);
     this.setView = this.setView.bind(this);
     this.setUser = this.setUser.bind(this);
     this.setPlayers = this.setPlayers.bind(this);
@@ -39,16 +34,7 @@ class Main extends Component {
     this.resetGame = this.resetGame.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
     this.countDown = this.countDown.bind(this);
-    this.handleResume = this.handleResume.bind(this);
     this.playGame = this.playGame.bind(this);
-    this.resume = this.resume.bind(this);
-  }
-
-  componentDidMount() {
-    const { room } = this.state;
-    socket.on(`resume-${room.roomId}`, data => {
-      this.resume();
-    });
   }
 
   componentWillUnmount() {
@@ -62,23 +48,10 @@ class Main extends Component {
     this.play();
   }
 
-  handleResume() {
-    const { room } = this.state;
-    socket.emit('resume', { roomId: room.roomId });
-  }
-
-  resume() {
-    this.setState({
-      isPlaying: true,
-      isPaused: false
-    });
-  }
-
   play() {
     this.setTime();
     this.setState({
       turn: this.state.player1,
-      isPaused: false,
       isPlaying: true
     });
   }
@@ -86,16 +59,7 @@ class Main extends Component {
   stop() {
     this.setState({
       isPlaying: false,
-      isPaused: true,
       turn: ''
-    });
-    // this.stopTimer();
-  }
-
-  pause() {
-    this.setState({
-      isPlaying: false,
-      isPaused: true
     });
   }
 
@@ -175,8 +139,8 @@ class Main extends Component {
   }
 
   render() {
-    const { handleStart, play, changePlayer, setTime, setView, playGame, setUser, startTimer, setPlayers, resetGame, handleResume, stop, pause } = this;
-    const { time, isPaused, isStarted, user, player1, player2, turn, isPlaying, view, room, mode } = this.state;
+    const { handleStart, play, changePlayer, setTime, setView, playGame, setUser, startTimer, setPlayers, resetGame, stop } = this;
+    const { time, isStarted, user, player1, player2, turn, view, room, mode } = this.state;
     let element = null;
     switch (view) {
       case 'game':
@@ -200,27 +164,17 @@ class Main extends Component {
               resetGame={resetGame}
               stop={stop}
               mode={mode}
+              setView={setView}
               setTime={setTime}
               startTimer={startTimer}
-              isPaused={isPaused}
-              handleResume={handleResume}
               changePlayer={changePlayer}
               play={play}
-            />
-            <Play
-              play={play}
-              room={room}
-              pause={pause}
-              isPlaying={isPlaying}
             />
             {isStarted
               ? ''
               : <AutoStartModal
                 handleStart={handleStart}
               />
-              //   category="start"
-              //   handleStart={handleStart}
-              // />
             }
           </>
         );
@@ -244,9 +198,9 @@ class Main extends Component {
       case 'room':
         element = (
           <Room
+            user={user}
             room={room}
             playGame={playGame}
-            user={user}
             setPlayers={setPlayers}
             setView={setView}
           />

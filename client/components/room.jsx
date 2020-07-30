@@ -96,7 +96,7 @@ class Room extends Component {
                       <td>
                         {`${player.user} ${isMe ? '(me)' : ''}`}
                       </td>
-                      <td>
+                      <td className="ready-custom">
                         {isMe
                           ? player.ready
                             ? <button disabled className="btn-custom-no-border rounded">ready</button>
