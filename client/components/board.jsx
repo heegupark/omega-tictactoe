@@ -81,61 +81,61 @@ class Board extends Component {
       if (!cards[4].isClicked) {
         cards[4].player = 'computer';
         cards[4].isClicked = true;
-      } else if (cards[0].player === cards[4].player && !cards[8].isClicked) {
+      } else if (cards[0].player && cards[4].player && cards[0].player === cards[4].player && !cards[8].isClicked) {
         cards[8].player = 'computer';
         cards[8].isClicked = true;
-      } else if (cards[1].player === cards[4].player && !cards[7].isClicked) {
+      } else if (cards[1].player && cards[4].player && cards[1].player === cards[4].player && !cards[7].isClicked) {
         cards[7].player = 'computer';
         cards[7].isClicked = true;
-      } else if (cards[2].player === cards[4].player && !cards[6].isClicked) {
+      } else if (cards[2].player && cards[4].player && cards[2].player === cards[4].player && !cards[6].isClicked) {
         cards[6].player = 'computer';
         cards[6].isClicked = true;
-      } else if (cards[3].player === cards[4].player && !cards[5].isClicked) {
+      } else if (cards[3].player && cards[4].player && cards[3].player === cards[4].player && !cards[5].isClicked) {
         cards[5].player = 'computer';
         cards[5].isClicked = true;
-      } else if (cards[5].player === cards[4].player && !cards[3].isClicked) {
+      } else if (cards[5].player && cards[4].player && cards[5].player === cards[4].player && !cards[3].isClicked) {
         cards[3].player = 'computer';
         cards[3].isClicked = true;
-      } else if (cards[6].player === cards[4].player && !cards[2].isClicked) {
+      } else if (cards[6].player && cards[4].player && cards[6].player === cards[4].player && !cards[2].isClicked) {
         cards[2].player = 'computer';
         cards[2].isClicked = true;
-      } else if (cards[7].player === cards[4].player && !cards[1].isClicked) {
+      } else if (cards[7].player && cards[4].player && cards[7].player === cards[4].player && !cards[1].isClicked) {
         cards[1].player = 'computer';
         cards[1].isClicked = true;
-      } else if (cards[8].player === cards[4].player && !cards[0].isClicked) {
+      } else if (cards[8].player && cards[4].player && cards[8].player === cards[4].player && !cards[0].isClicked) {
         cards[0].player = 'computer';
         cards[0].isClicked = true;
-      } else if (cards[0].player === cards[1].player && !cards[2].isClicked) {
+      } else if (cards[0].player && cards[1].player && cards[0].player === cards[1].player && !cards[2].isClicked) {
         cards[2].player = 'computer';
         cards[2].isClicked = true;
-      } else if (cards[0].player === cards[3].player && !cards[6].isClicked) {
+      } else if (cards[0].player && cards[3].player && cards[0].player === cards[3].player && !cards[6].isClicked) {
         cards[6].player = 'computer';
         cards[6].isClicked = true;
-      } else if (cards[1].player === cards[2].player && !cards[0].isClicked) {
+      } else if (cards[1].player && cards[2].player && cards[1].player === cards[2].player && !cards[0].isClicked) {
         cards[0].player = 'computer';
         cards[0].isClicked = true;
-      } else if (cards[2].player === cards[0].player && !cards[1].isClicked) {
+      } else if (cards[2].player && cards[0].player && cards[2].player === cards[0].player && !cards[1].isClicked) {
         cards[1].player = 'computer';
         cards[1].isClicked = true;
-      } else if (cards[3].player === cards[6].player && !cards[0].isClicked) {
+      } else if (cards[3].player && cards[6].player && cards[3].player === cards[6].player && !cards[0].isClicked) {
         cards[0].player = 'computer';
         cards[0].isClicked = true;
-      } else if (cards[6].player === cards[7].player && !cards[8].isClicked) {
+      } else if (cards[6].player && cards[7].player && cards[6].player === cards[7].player && !cards[8].isClicked) {
         cards[8].player = 'computer';
         cards[8].isClicked = true;
-      } else if (cards[8].player === cards[7].player && !cards[6].isClicked) {
+      } else if (cards[8].player && cards[7].player && cards[8].player === cards[7].player && !cards[6].isClicked) {
         cards[6].player = 'computer';
         cards[6].isClicked = true;
-      } else if (cards[8].player === cards[6].player && !cards[7].isClicked) {
+      } else if (cards[8].player && cards[6].player && cards[8].player === cards[6].player && !cards[7].isClicked) {
         cards[7].player = 'computer';
         cards[7].isClicked = true;
-      } else if (cards[2].player === cards[5].player && !cards[8].isClicked) {
+      } else if (cards[2].player && cards[5].player && cards[2].player === cards[5].player && !cards[8].isClicked) {
         cards[8].player = 'computer';
         cards[8].isClicked = true;
-      } else if (cards[2].player === cards[8].player && !cards[5].isClicked) {
+      } else if (cards[2].player && cards[8].player && cards[2].player === cards[8].player && !cards[5].isClicked) {
         cards[5].player = 'computer';
         cards[5].isClicked = true;
-      } else if (cards[8].player === cards[5].player && !cards[2].isClicked) {
+      } else if (cards[8].player && cards[5].player && cards[8].player === cards[5].player && !cards[2].isClicked) {
         cards[2].player = 'computer';
         cards[2].isClicked = true;
       } else {
