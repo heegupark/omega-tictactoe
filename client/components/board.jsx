@@ -20,7 +20,7 @@ class Board extends Component {
     this.clickCard = this.clickCard.bind(this);
     this.changePlayer = this.changePlayer.bind(this);
     this.handleReplayClick = this.handleReplayClick.bind(this);
-    this.handleBackToWaitingClick = this.handleBackToWaitingClick.bind(this);
+    this.handleBackToMainClick = this.handleBackToMainClick.bind(this);
     this.playComputer = this.playComputer.bind(this);
     this.replay = this.replay.bind(this);
     this.back = this.back.bind(this);
@@ -62,21 +62,93 @@ class Board extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+    };
+    this.setState({
+      cards: [],
+      numOfCards: 9,
+      isGameOver: false,
+      winner: ''
+    });
+  }
+
   playComputer() {
     const { cards } = this.state;
     const random = Math.random(0, 1) * 10;
     const arr = [...((add, set) => add(set, add))((set, add) => set.size < 9 ? add(set.add(Math.floor(Math.random() * 9)), add) : set, new Set())];
     setTimeout(() => {
-      for (const i of arr) {
-        if (!cards[i].isClicked) {
-          cards[i].player = 'computer';
-          cards[i].isClicked = true;
-          break;
+      if (!cards[4].isClicked) {
+        cards[4].player = 'computer';
+        cards[4].isClicked = true;
+      } else if (cards[0].player === cards[4].player && !cards[8].isClicked) {
+        cards[8].player = 'computer';
+        cards[8].isClicked = true;
+      } else if (cards[1].player === cards[4].player && !cards[7].isClicked) {
+        cards[7].player = 'computer';
+        cards[7].isClicked = true;
+      } else if (cards[2].player === cards[4].player && !cards[6].isClicked) {
+        cards[6].player = 'computer';
+        cards[6].isClicked = true;
+      } else if (cards[3].player === cards[4].player && !cards[5].isClicked) {
+        cards[5].player = 'computer';
+        cards[5].isClicked = true;
+      } else if (cards[5].player === cards[4].player && !cards[3].isClicked) {
+        cards[3].player = 'computer';
+        cards[3].isClicked = true;
+      } else if (cards[6].player === cards[4].player && !cards[2].isClicked) {
+        cards[2].player = 'computer';
+        cards[2].isClicked = true;
+      } else if (cards[7].player === cards[4].player && !cards[1].isClicked) {
+        cards[1].player = 'computer';
+        cards[1].isClicked = true;
+      } else if (cards[8].player === cards[4].player && !cards[0].isClicked) {
+        cards[0].player = 'computer';
+        cards[0].isClicked = true;
+      } else if (cards[0].player === cards[1].player && !cards[2].isClicked) {
+        cards[2].player = 'computer';
+        cards[2].isClicked = true;
+      } else if (cards[0].player === cards[3].player && !cards[6].isClicked) {
+        cards[6].player = 'computer';
+        cards[6].isClicked = true;
+      } else if (cards[1].player === cards[2].player && !cards[0].isClicked) {
+        cards[0].player = 'computer';
+        cards[0].isClicked = true;
+      } else if (cards[2].player === cards[0].player && !cards[1].isClicked) {
+        cards[1].player = 'computer';
+        cards[1].isClicked = true;
+      } else if (cards[3].player === cards[6].player && !cards[0].isClicked) {
+        cards[0].player = 'computer';
+        cards[0].isClicked = true;
+      } else if (cards[6].player === cards[7].player && !cards[8].isClicked) {
+        cards[8].player = 'computer';
+        cards[8].isClicked = true;
+      } else if (cards[8].player === cards[7].player && !cards[6].isClicked) {
+        cards[6].player = 'computer';
+        cards[6].isClicked = true;
+      } else if (cards[8].player === cards[6].player && !cards[7].isClicked) {
+        cards[7].player = 'computer';
+        cards[7].isClicked = true;
+      } else if (cards[2].player === cards[5].player && !cards[8].isClicked) {
+        cards[8].player = 'computer';
+        cards[8].isClicked = true;
+      } else if (cards[2].player === cards[8].player && !cards[5].isClicked) {
+        cards[5].player = 'computer';
+        cards[5].isClicked = true;
+      } else if (cards[8].player === cards[5].player && !cards[2].isClicked) {
+        cards[2].player = 'computer';
+        cards[2].isClicked = true;
+      } else {
+        for (const i of arr) {
+          if (!cards[i].isClicked) {
+            cards[i].player = 'computer';
+            cards[i].isClicked = true;
+            break;
+          }
         }
       }
       this.checkWin();
-      // this.changePlayer();
-    }, random * 1000);
+    }, random * 1);
   }
 
   setCards() {
@@ -96,11 +168,11 @@ class Board extends Component {
   }
 
   changePlayer() {
-    const currentPlayer = this.props.turn;
+    const { turn, user } = this.props;
     this.props.changePlayer();
     this.props.setTime();
     if (this.props.mode === 'single') {
-      const nextPlayer = currentPlayer === this.props.user ? 'computer' : this.props.user;
+      const nextPlayer = turn === user ? 'computer' : user;
       if (nextPlayer === 'computer') {
         this.playComputer();
       }
@@ -146,7 +218,6 @@ class Board extends Component {
         cards[0].player === cards[4].player &&
         cards[4].player === cards[8].player) {
       socket.emit('win', { roomId: room.id, result: [0, 4, 8] });
-      // this.setWin([0, 4, 8]);
       return;
     }
 
@@ -156,7 +227,6 @@ class Board extends Component {
         cards[2].player === cards[4].player &&
         cards[4].player === cards[6].player) {
       socket.emit('win', { roomId: room.id, result: [2, 4, 6] });
-      // this.setWin([2, 4, 6]);
       return;
     }
 
@@ -167,7 +237,6 @@ class Board extends Component {
           cards[i].player === cards[i + 3].player &&
           cards[i + 3].player === cards[i + 6].player) {
         socket.emit('win', { roomId: room.id, result: [i, i + 3, i + 6] });
-        // this.setWin([i, i + 3, i + 6]);
         return;
       }
     }
@@ -179,7 +248,6 @@ class Board extends Component {
         cards[i].player === cards[i + 1].player &&
         cards[i + 1].player === cards[i + 2].player) {
         socket.emit('win', { roomId: room.id, result: [i, i + 1, i + 2] });
-        // this.setWin([i, i + 1, i + 2]);
         return;
       }
     }
@@ -193,10 +261,8 @@ class Board extends Component {
       cards[7].player &&
       cards[8].player) {
       socket.emit('draw', { roomId: room.id });
-      // this.setDraw();
       return;
     }
-    // this.changePlayer();
     socket.emit('change-player', { roomId: room.id });
   }
 
@@ -205,7 +271,7 @@ class Board extends Component {
     socket.emit('replay', { roomId: room.id });
   }
 
-  handleBackToWaitingClick() {
+  handleBackToMainClick() {
     const { room } = this.props;
     socket.emit('back-to-waiting', { roomId: room.id });
   }
@@ -221,11 +287,11 @@ class Board extends Component {
 
   back() {
     const { room } = this.props;
-    this.props.setView('room', room);
+    this.props.setView('waiting', room);
   }
 
   render() {
-    const { clickCard, handleReplayClick, handleBackToWaitingClick } = this;
+    const { clickCard, handleReplayClick, handleBackToMainClick } = this;
     const { user, turn, player1, player2, time } = this.props;
     const { cards, isGameOver, winner } = this.state;
     return (
@@ -291,7 +357,7 @@ class Board extends Component {
           ? <Modal
             category="win"
             handleReplayClick={handleReplayClick}
-            handleBackToWaitingClick={handleBackToWaitingClick}
+            handleBackToMainClick={handleBackToMainClick}
             winner={winner}
           />
           : ''

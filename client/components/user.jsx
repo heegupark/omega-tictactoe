@@ -35,7 +35,7 @@ class User extends Component {
           <span className="text-center mb-2 gold">
             {'type player name'}
           </span >
-          <table className="mx-auto mt-2 mb-1">
+          <table className="mt-2 mb-1">
             <tbody>
               <tr className="text-center h-40px">
                 <td></td>
@@ -56,7 +56,7 @@ class User extends Component {
               <tr className="text-center h-40px">
                 <td>
                   <button
-                    className="btn-custom-no-border rounded"
+                    className="btn-custom rounded"
                     onClick={handleCreateUsername}>create</button>
                 </td>
               </tr>

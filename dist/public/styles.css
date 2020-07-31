@@ -32,6 +32,10 @@ main {
   top: 7%;
 }
 
+.font-small{
+  font-size: 10px;
+}
+
 .menu {
   width: 50%;
 }
@@ -146,7 +150,7 @@ main {
 .modal-content {
   background-color: rgba(0,0,0,0.9);
   margin: 15% auto;
-  padding: 20px;
+  padding: 20px 0px;
   border: 1px solid #888;
   width: 40%;
 }
@@ -176,8 +180,8 @@ main {
 
 @media (max-width: 575.98px) {
   .board {
-    width: 270px;
-    height: 270px;
+    width: 300px;
+    height: 300px;
   }
 
   .grid {
@@ -195,6 +199,10 @@ main {
 
   .menu {
     width: 90%;
+  }
+
+  .menu-item {
+    font-size: 14px;
   }
 }
 
@@ -228,6 +236,11 @@ main {
 
   .menu-box {
     width: 30%;
+  }
+
+  .modal-content {
+    margin: 10% auto;
+    width: 60%;
   }
 
   .menu-item {

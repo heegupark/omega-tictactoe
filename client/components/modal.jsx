@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Modal extends Component {
   render() {
     const { category, winner } = this.props;
-    const { handleReplayClick, handleBackToWaitingClick, handleStart, handleResume } = this.props;
+    const { handleReplayClick, handleBackToMainClick, handleStart, handleResume } = this.props;
     const msg = winner === 'draw' ? winner : `${winner} won!`;
     let element = null;
     switch (category) {
@@ -26,7 +26,7 @@ class Modal extends Component {
                 <button
                   type="button"
                   className="bg-transparent rounded btn-custom"
-                  onClick={handleBackToWaitingClick}>back</button>
+                  onClick={handleBackToMainClick}>main</button>
               </div>
             </div>
           </>

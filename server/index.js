@@ -35,6 +35,8 @@ io.on('connection', socket => {
         socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
       }
     }
+    socket.emit('room-list', { success: true, rooms });
+    socket.broadcast.emit('room-list', { success: true, rooms });
   });
 
   socket.on('game-ready', (data, callback) => {
@@ -63,9 +65,12 @@ io.on('connection', socket => {
     const newRooms = rooms.filter(room => room.players.length !== 0);
     rooms = [...newRooms];
     socket.emit('room-list', { success: true, rooms });
+    socket.broadcast.emit('room-list', { success: true, rooms });
   });
 
   socket.on('refresh-room', (data, callback) => {
+    const newRooms = rooms.filter(room => room.players.length !== 0);
+    rooms = [...newRooms];
     socket.emit('room-list', { success: true, rooms });
   });
 

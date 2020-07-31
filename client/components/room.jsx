@@ -39,13 +39,12 @@ class Room extends Component {
   componentWillUnmount() {
     this.setState = (state, callback) => {
     };
-    socket.emit('disconnect');
+    // socket.emit('disconnect');
   }
 
   handleLeaveClick() {
     const { room, user } = this.props;
     const roomId = room.id;
-    // this.props.leaveRoom({ roomId, user });
     socket.emit('leave-room', { roomId, user });
     this.props.setView('waiting');
   }
@@ -65,8 +64,6 @@ class Room extends Component {
     const { room } = this.props;
     const roomId = room.id;
     socket.emit('play-game', { roomId });
-    // this.props.setPlayers(this.state.players);
-    // this.props.playGame('multi');
   }
 
   render() {
@@ -82,7 +79,7 @@ class Room extends Component {
           <span className="text-center mb-2 gold">
             {`${room.name}`}
           </span >
-          <table className="mx-auto mt-2 mb-1">
+          <table className="mt-2 mb-1">
             <tbody>
               <tr className="text-center h-40px">
                 <td colSpan="2">
@@ -140,6 +137,13 @@ class Room extends Component {
                   <button
                     className="btn-custom rounded"
                     onClick={handleLeaveClick}>leave</button>
+                </td>
+              </tr>
+              <tr className="text-center h-40px">
+                <td colSpan="2">
+                  <span className="font-small">
+                    {'* all players should be ready for the game.'}
+                  </span>
                 </td>
               </tr>
             </tbody>

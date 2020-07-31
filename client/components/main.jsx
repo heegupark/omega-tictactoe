@@ -132,10 +132,12 @@ class Main extends Component {
   }
 
   playGame(mode) {
-    // if (mode === 'multi') {
-    this.setState({ mode, turn: this.state.user });
+    this.setState({
+      mode,
+      isStarted: false,
+      isPlaying: false
+    });
     this.setView('game', this.state.room);
-    // }
   }
 
   render() {
@@ -146,14 +148,6 @@ class Main extends Component {
       case 'game':
         element = (
           <>
-            <Menu
-              time={time}
-              user={user}
-              player1={player1}
-              player2={player2}
-              turn={turn}
-              isStarted={isStarted}
-            />
             <Board
               time={time}
               turn={turn}
@@ -209,6 +203,15 @@ class Main extends Component {
     }
     return (
       <main className="d-flex align-items-center">
+        <Menu
+          time={time}
+          user={user}
+          view={view}
+          player1={player1}
+          player2={player2}
+          turn={turn}
+          isStarted={isStarted}
+        />
         {element}
       </main>
     );

@@ -87,13 +87,10 @@ class Waiting extends Component {
       <div className="modal">
         <div className="modal-content">
           <span className="text-center mb-2 gold">
-              rooms
+            {'rooms'}
           </span >
           <table className="mx-auto mt-2 mb-1">
             <tbody>
-              <tr className="text-center h-40px">
-                <td colSpan="2"></td>
-              </tr>
               {rooms.length
                 ? (
                   rooms.map(room => {
@@ -151,6 +148,13 @@ class Waiting extends Component {
                   <button
                     className="btn-custom rounded"
                     onClick={handleRefreshClick}>refresh</button>
+                </td>
+              </tr>
+              <tr className="text-center h-40px">
+                <td colSpan="2">
+                  <span className="font-small">
+                    {'* click the room to join or create the room'}
+                  </span>
                 </td>
               </tr>
             </tbody>
