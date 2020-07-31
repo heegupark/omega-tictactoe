@@ -117,6 +117,9 @@ class Board extends Component {
       } else if (cards[2].player && cards[0].player && cards[2].player === cards[0].player && !cards[1].isClicked) {
         cards[1].player = 'computer';
         cards[1].isClicked = true;
+      } else if (cards[0].player && cards[6].player && cards[0].player === cards[6].player && !cards[3].isClicked) {
+        cards[3].player = 'computer';
+        cards[3].isClicked = true;
       } else if (cards[3].player && cards[6].player && cards[3].player === cards[6].player && !cards[0].isClicked) {
         cards[0].player = 'computer';
         cards[0].isClicked = true;
