@@ -79,7 +79,7 @@ class Room extends Component {
           <span className="text-center mb-2 gold">
             {`${room.name}`}
           </span >
-          <table className="mt-2 mb-1">
+          <table className="mx-auto mt-2 mb-1">
             <tbody>
               <tr className="text-center h-40px">
                 <td colSpan="2">
