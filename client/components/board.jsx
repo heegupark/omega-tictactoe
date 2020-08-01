@@ -76,7 +76,7 @@ class Board extends Component {
   playComputer() {
     const { cards } = this.state;
     const random = Math.random(0, 1) * 10;
-    const arr = [...((add, set) => add(set, add))((set, add) => set.size < 9 ? add(set.add(Math.floor(Math.random() * 9)), add) : set, new Set())];
+    const arr = [0, 2, 6, 8, 1, 3, 5, 7, 4];
     setTimeout(() => {
       if (!cards[4].isClicked) {
         cards[4].player = 'computer';
