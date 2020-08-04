@@ -13,7 +13,6 @@ class Room extends Component {
     this.handleReadyClick = this.handleReadyClick.bind(this);
     this.handlePlaySingle = this.handlePlaySingle.bind(this);
     this.handleMultiPlay = this.handleMultiPlay.bind(this);
-    this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   componentDidMount() {
@@ -69,16 +68,10 @@ class Room extends Component {
     socket.emit('play-game', { roomId });
   }
 
-  handleRefreshClick() {
-    const { room } = this.props;
-    const roomId = room.id;
-    socket.emit('refresh-room', { roomId });
-  }
-
   render() {
     const { room } = this.props;
     const { success, players } = this.state;
-    const { handleLeaveClick, handleReadyClick, handlePlaySingle, handleMultiPlay, handleRefreshClick } = this;
+    const { handleLeaveClick, handleReadyClick, handlePlaySingle, handleMultiPlay } = this;
     const isNoOne = players.length === 0;
     const isSingle = players.length === 1;
     const isAllReady = players.filter(player => player.ready);
@@ -130,9 +123,7 @@ class Room extends Component {
               <tr className="text-center h-40px">
                 <td colSpan="2">
                   {isNoOne
-                    ? <button
-                      className="btn-custom rounded"
-                      onClick={handleRefreshClick}>refresh</button>
+                    ? ('')
                     : isSingle
                       ? <button
                         className="btn-custom rounded"
