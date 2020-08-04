@@ -40,8 +40,6 @@ io.on('connection', socket => {
   });
 
   socket.on('refresh-room', (data, callback) => {
-    const newRooms = rooms.filter(room => room.players.length !== 0);
-    rooms = [...newRooms];
     socket.emit(`room-${data.roomId}`, { success: true, rooms });
   });
 
