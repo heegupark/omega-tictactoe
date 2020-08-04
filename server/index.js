@@ -39,6 +39,21 @@ io.on('connection', socket => {
     socket.broadcast.emit('room-list', { success: true, rooms });
   });
 
+  socket.on('refresh-room', (data, callback) => {
+    const index = rooms.findIndex(room => room.roomId === data.roomId);
+    if (index >= 0) {
+      const numberOfPlayers = rooms[index].players.length;
+      if (numberOfPlayers >= 2) {
+        rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
+        socket.emit(`room-${data.roomId}`, { success: false, message: 'unable to join' });
+      } else {
+        rooms.map(room => room.roomId.toString() === data.roomId.toString() ? room.players.push({ user: data.user, ready: false }) : '');
+        socket.emit(`room-${data.roomId}`, { success: true, rooms });
+        socket.broadcast.emit(`room-${data.roomId}`, { success: true, rooms });
+      }
+    }
+  });
+
   socket.on('game-ready', (data, callback) => {
     rooms.map(room => {
       if (room.roomId === data.roomId) {
@@ -68,7 +83,7 @@ io.on('connection', socket => {
     socket.broadcast.emit('room-list', { success: true, rooms });
   });
 
-  socket.on('refresh-room', (data, callback) => {
+  socket.on('refresh-waiting-room', (data, callback) => {
     const newRooms = rooms.filter(room => room.players.length !== 0);
     rooms = [...newRooms];
     socket.emit('room-list', { success: true, rooms });

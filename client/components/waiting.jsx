@@ -77,7 +77,7 @@ class Waiting extends Component {
   }
 
   handleRefreshClick() {
-    socket.emit('refresh-room', null);
+    socket.emit('refresh-waiting-room', null);
   }
 
   render() {
