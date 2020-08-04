@@ -23,10 +23,12 @@ class Room extends Component {
       const playersArr = data.rooms.filter(room => {
         return room.roomId.toString() === roomId.toString();
       });
-      this.setState({
-        success: data.success,
-        players: playersArr[0].players
-      });
+      if (data.success) {
+        this.setState({
+          success: data.success,
+          players: playersArr[0].players
+        });
+      }
     });
     socket.on(`play-game-${roomId}`, data => {
       if (data.success) {
@@ -70,6 +72,7 @@ class Room extends Component {
     const { room } = this.props;
     const { success, players } = this.state;
     const { handleLeaveClick, handleReadyClick, handlePlaySingle, handleMultiPlay } = this;
+    const isNoOne = players.length === 0;
     const isSingle = players.length === 1;
     const isAllReady = players.filter(player => player.ready);
     const isAbleToStart = isAllReady.length === 2;
@@ -108,11 +111,13 @@ class Room extends Component {
                     </tr>
                   );
                 })
-                : (<tr>
-                  <td colSpan="2" className="text-center">
-                    {''}
-                  </td>
-                </tr>)
+                : (
+                  <tr>
+                    <td colSpan="2" className="text-center h-40px">
+                      {''}
+                    </td>
+                  </tr>
+                )
               }
               <tr className="text-center h-40px">
                 <td colSpan="2">
@@ -120,15 +125,18 @@ class Room extends Component {
               </tr>
               <tr className="text-center h-40px">
                 <td colSpan="2">
-                  {isSingle
-                    ? <button
-                      className="btn-custom rounded"
-                      onClick={handlePlaySingle}>play single</button>
-                    : isAbleToStart
-                      ? <button className='btn-custom rounded'
-                        onClick={handleMultiPlay}>start</button>
-                      : <button disabled className='btn-custom rounded'
-                      >{'waiting'}</button>
+                  {isNoOne
+                    ? ('')
+                    : isSingle
+                      ? <button
+                        className="btn-custom rounded"
+                        onClick={handlePlaySingle}>play single</button>
+                      : isAbleToStart
+                        ? <button className='btn-custom rounded'
+                          onClick={handleMultiPlay}>start</button>
+                        : <button disabled className='btn-custom rounded'>
+                          {'waiting'}
+                        </button>
                   }
                 </td>
               </tr>
@@ -142,7 +150,9 @@ class Room extends Component {
               <tr className="text-center h-40px">
                 <td colSpan="2">
                   <span className="font-small">
-                    {'* all players should be ready for the game.'}
+                    {isAbleToStart
+                      ? '* click to start the game.'
+                      : '* all players should be ready for the game.'}
                   </span>
                 </td>
               </tr>

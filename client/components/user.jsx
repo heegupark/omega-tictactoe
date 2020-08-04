@@ -60,6 +60,13 @@ class User extends Component {
                     onClick={handleCreateUsername}>create</button>
                 </td>
               </tr>
+              <tr className="text-center h-40px">
+                <td colSpan="2">
+                  <span className="font-small">
+                    {'* enter a username or just click create button.'}
+                  </span>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

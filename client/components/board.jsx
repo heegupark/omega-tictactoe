@@ -298,80 +298,87 @@ class Board extends Component {
     const { user, turn, player1, player2, time } = this.props;
     const { cards, isGameOver, winner } = this.state;
     return (
-      <div className="board mx-auto">
-        <div className="row grid-row mx-auto border-bottom">
-          {cards.length
-            ? [cards[0], cards[1], cards[2]].map(card => {
-              return (
-                <Card
-                  key={card.id}
-                  id={card.id}
-                  card={card}
-                  user={user}
-                  turn={turn}
-                  player1={player1}
-                  player2={player2}
-                  clickCard={clickCard}
-                />
-              );
-            })
+      <>
+        <div className="board mx-auto">
+          <div className="row grid-row mx-auto border-bottom">
+            {cards.length
+              ? [cards[0], cards[1], cards[2]].map(card => {
+                return (
+                  <Card
+                    key={card.id}
+                    id={card.id}
+                    card={card}
+                    user={user}
+                    turn={turn}
+                    player1={player1}
+                    player2={player2}
+                    clickCard={clickCard}
+                  />
+                );
+              })
+              : ''
+            }
+          </div>
+          <div className="row grid-row mx-auto border-bottom">
+            {cards.length
+              ? [cards[3], cards[4], cards[5]].map(card => {
+                return (
+                  <Card
+                    key={card.id}
+                    id={card.id}
+                    card={card}
+                    user={user}
+                    turn={turn}
+                    player1={player1}
+                    player2={player2}
+                    clickCard={clickCard}
+                  />
+                );
+              })
+              : ''
+            }
+          </div>
+          <div className="row grid-row mx-auto">
+            {cards.length
+              ? [cards[6], cards[7], cards[8]].map(card => {
+                return (
+                  <Card
+                    key={card.id}
+                    id={card.id}
+                    card={card}
+                    user={user}
+                    turn={turn}
+                    player1={player1}
+                    player2={player2}
+                    clickCard={clickCard}
+                  />
+                );
+              })
+              : ''
+            }
+          </div>
+          <div className="row text-center h-40px mt-3">
+            <span className="mx-auto">
+              {'* click a cell to make three marks in a line to win!'}
+            </span>
+          </div>
+          {isGameOver
+            ? <Modal
+              category="win"
+              handleReplayClick={handleReplayClick}
+              handleBackToMainClick={handleBackToMainClick}
+              winner={winner}
+            />
             : ''
           }
-        </div>
-        <div className="row grid-row mx-auto border-bottom">
-          {cards.length
-            ? [cards[3], cards[4], cards[5]].map(card => {
-              return (
-                <Card
-                  key={card.id}
-                  id={card.id}
-                  card={card}
-                  user={user}
-                  turn={turn}
-                  player1={player1}
-                  player2={player2}
-                  clickCard={clickCard}
-                />
-              );
-            })
-            : ''
+          {time
+            ? ''
+            : <Modal
+              category="turnover"
+            />
           }
         </div>
-        <div className="row grid-row mx-auto">
-          {cards.length
-            ? [cards[6], cards[7], cards[8]].map(card => {
-              return (
-                <Card
-                  key={card.id}
-                  id={card.id}
-                  card={card}
-                  user={user}
-                  turn={turn}
-                  player1={player1}
-                  player2={player2}
-                  clickCard={clickCard}
-                />
-              );
-            })
-            : ''
-          }
-        </div>
-        {isGameOver
-          ? <Modal
-            category="win"
-            handleReplayClick={handleReplayClick}
-            handleBackToMainClick={handleBackToMainClick}
-            winner={winner}
-          />
-          : ''
-        }
-        {time
-          ? ''
-          : <Modal
-            category="turnover"
-          />
-        }
-      </div>
+      </>
     );
   }
 }

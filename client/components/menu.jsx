@@ -18,10 +18,8 @@ class Menu extends Component {
             </div>
           </div>
           : view !== 'user'
-            ? <div className="row">
-              <div className="col text-center">
-                {`hello, ${user}`}
-              </div>
+            ? <div className="text-center">
+              {`hello, ${user}`}
             </div>
             : ''
         }
